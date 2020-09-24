@@ -94,6 +94,8 @@ export class BenkhardJenkinsStack extends cdk.Stack {
       healthCheckGracePeriod: Duration.minutes(5),
       domainName: 'jenkins.benkhard.com',
       domainZone: hostedZone,
+      minHealthyPercent: 0,
+      maxHealthyPercent: 100
     });
 
     const customTaskDefinitionJson = {
@@ -180,7 +182,10 @@ export class BenkhardJenkinsStack extends cdk.Stack {
     );
 
     loadBalancerFargateService.targetGroup.configureHealthCheck({
-      path: '/login'
+      path: '/login',
+      unhealthyThresholdCount: 5,
+      healthyThresholdCount: 2,
+      interval: Duration.minutes(1)
     });
   }
 }
